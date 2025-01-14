@@ -4,8 +4,6 @@ import { ShopContext } from '../context/ShopContext'
 import Title from './Title';
 import ProductItem from './ProductItem';
 
-
-
 const BestSeller = () => {
 
     const {products} = useContext(ShopContext);
@@ -13,7 +11,8 @@ const BestSeller = () => {
    
    
     useEffect(() => {
-        const bestProduct = products.filter((item) => (item.bestseller));
+
+        const bestProduct = products.filter((item) => item.bestseller);
         setBestSeller(bestProduct.slice(0, 5));
     }, []);
 

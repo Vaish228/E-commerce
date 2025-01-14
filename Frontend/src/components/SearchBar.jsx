@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react'; // Import useState
+import { useState, useEffect, useContext } from 'react'; // Import useState
 import { ShopContext } from '../context/ShopContext';
 import {assets} from "../assets/assets";
 import { useLocation } from 'react-router-dom'; 
 const SearchBar = () => {
 
     const { search, setSearch, showSearch, setShowSearch} = useContext(ShopContext);
-    const [visible,setVisible] =useState(false);
+    const [visible, setVisible] = useState(false);
     const location = useLocation();
 
     useEffect(()=>{
@@ -15,6 +15,7 @@ const SearchBar = () => {
         else{
             setVisible(false);
         }
+        //console.log(location.pathname);
     },[location])
   
   
@@ -24,7 +25,7 @@ const SearchBar = () => {
             <input value={search} onChange={(e)=>setSearch(e.target.value)} className='flex-1 outline-none bg-inherit text-sm' type="text" placeholder="Search" />
             <img className='w-4' src={assets.search_icon} alt="" />
         </div>
-        <img onClick={() => setShowSearch(false)} className='inline w-3 cursor-pointer' src = {assets.search_icon} alt="Open Search" />
+        <img onClick={() => setShowSearch(false)} className='inline w-3 cursor-pointer' src = {assets.cross_icon} alt="Open Search" />
 
     </div>
   ) : null
