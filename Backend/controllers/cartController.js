@@ -1,62 +1,85 @@
-import userModel from "../models/userModel.js"
+import userModel from "../models/userModel.js";
 
-const addToCart = async (req,res) => {
+const addToCart = async (req, res) => {
     try {
-        const { userId, itemId, size } = req.body
+        const { userId, itemId, size } = req.body;
 
-
-        if (cartData[itemId])
-        {
-            if(cartData[itemId][size]){
-                cartData[itemId][size] += 1
-            }
-            else{
-                cartData[itemId][size] = 1
-            }
-        }else{
-            cartData[itemId] = {}
-            cartData[itemId][size] = 1
+        // Validate inputs
+        if (!userId || !itemId || !size) {
+            return res.status(400).json({ success: false, message: "Invalid input data" });
         }
-        await userModel.findByIdAndUpdate(userId, {cartData})
 
-        res.json({ success: true, message: "Added To Cart" })
+        // Find user and initialize cartData if needed
+        const userData = await userModel.findById(userId);
+        if (!userData) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const cartData = userData.cartData || {};
+        cartData[itemId] = cartData[itemId] || {};
+        cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
+
+        // Update the database
+        await userModel.findByIdAndUpdate(userId, { cartData });
+
+        res.status(200).json({ success: true, message: "Added to cart" });
     } catch (error) {
-        
-        console.log(error)
-        res.json({ success: false, message: error.message })
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
-}
+};
 
-const updateCart = async (req,res) => {
+const updateCart = async (req, res) => {
     try {
-        const { userId, itemId, size, quantity } = req.body
+        const { userId, itemId, size, quantity } = req.body;
 
-        const userData = await userModel.findById(userId)
-        let cartData = await userData.cartData;
+        // Validate inputs
+        if (!userId || !itemId || !size || typeof quantity !== "number") {
+            return res.status(400).json({ success: false, message: "Invalid input data" });
+        }
 
-        cartData[itemId][size] = quantity
+        // Find user and initialize cartData if needed
+        const userData = await userModel.findById(userId);
+        if (!userData) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
 
-        await userModel.findByIdAndUpdate(userId, {cartData})
-        res.json({ success: true, message: "Cart Updated" })
-   
+        const cartData = userData.cartData || {};
+        cartData[itemId] = cartData[itemId] || {};
+        cartData[itemId][size] = quantity;
+
+        // Update the database
+        await userModel.findByIdAndUpdate(userId, { cartData });
+
+        res.status(200).json({ success: true, message: "Cart updated" });
     } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
-}
-
-const getUserCart = async (req,res) => {
+};
+// backend-side (Express controller)
+const getUserCart = async (req, res) => {
     try {
-        const { userId } = req.body
+        const { userId } = req.params; // Get from URL params
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "User ID is required" });
+        }
 
-        const userData = await userModel.findById(userId)
-        let cartData = await userData.cartData;
+        const userData = await userModel.findById(userId);
+        if (!userData) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
 
-        res.json({ success: true, cartData });
+        const cartData = userData.cartData || {};
+        res.status(200).json({ success: true, cartData });
     } catch (error) {
-        console.log(error);
-        res.json({success: false, message: error.message})
+        console.error('❌ Error fetching cart data:', error);
+        res.status(500).json({ success: false, message: 'Error fetching cart data.' });
     }
-}
+};
 
-export { addToCart, updateCart,getUserCart }
+
+
+  
+
+export { addToCart, updateCart, getUserCart };    

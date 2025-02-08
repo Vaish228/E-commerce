@@ -15,13 +15,11 @@ const Product = () => {
 
   const fetchProductData = async () => {
 
-    products.map((item)=>{
-      if(item._id === productId){
-        setProductData(item)
-        setImage(item.image[0])
-        return null;
-      }
-    })
+    const product = products.find((item) => item._id === productId);
+    if (product) {
+      setProductData(product);
+      setImage(product.image[0]);
+    }
 
   }
   useEffect(()=>{
@@ -36,9 +34,10 @@ const Product = () => {
         <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
            <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
             {
-              productData.image.map((item,index)=>(
-                <img onClick={()=>setImage(item)} src={item} key={index} className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' />
+              productData.image.map((item, index) => (
+                <img key={`${productId}-${index}`} onClick={() => setImage(item)} src={item} className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' />
               ))
+              
             }
            </div>
            <div className='w-full sm:w-[80%]'>
@@ -64,9 +63,10 @@ const Product = () => {
               <p>Select Size</p>
               <div className='flex gap-2'>
                  
-                  {productData.sizes.map((item,index)=>(
-                    <button onClick={()=>setSize(item)} className={`border py-2 px-4 bg-gray-100 ${item === size ? 'border-orange-500' : ''}`} key={index}>{item}</button>
-                  ))}
+              {productData.sizes?.map((item, index) => (
+  <button onClick={() => setSize(item)} className={`border py-2 px-4 bg-gray-100 ${item === size ? 'border-orange-500' : ''}`} key={index}>{item}</button>
+))}
+
                  
               </div>
             </div>

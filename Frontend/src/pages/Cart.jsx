@@ -24,6 +24,9 @@ const Cart = () => {
           }
         }
       }
+      console.log("Products Array:", products);
+console.log("Cart Data:", cartData);
+//console.log("Item being processed:", item);
       setCartData(tempData);
     }
   },[cartItems])
@@ -38,7 +41,13 @@ const Cart = () => {
       <div>
         {
           cartData.map((item,index) =>{
-            const productData = products.find((product)=> product._id === item._id);
+            const productData = products.find((product) => product._id === item._id);
+
+            if (!productData) {
+              console.error(`Product not found for ID: ${item._id}`);
+              return null; // Skip rendering for this item
+            }
+            
             return(
               <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'> 
                 <div className='flex items-start gap-6'>
@@ -52,7 +61,8 @@ const Cart = () => {
                 </div> 
               </div>
               <input onChange={(e)=> e.target.value === '' || e.target.value === '0' ? null : updateQuantity(item.id, item.size, Number(e.target.value))} className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type="number" min={1} defaultValue={item.quantity} />
-              <img onClick={()=> updateQuantity(item.id,item.size,0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src = {assets.bin_icon} alt="" />
+                 <img onClick={() => updateQuantity(item._id, item.size, 0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src={assets.bin_icon} alt="" />
+
               </div>
             )
           })
@@ -70,6 +80,8 @@ const Cart = () => {
       
     </div>
   )
+  
 }
+
 
 export default Cart
