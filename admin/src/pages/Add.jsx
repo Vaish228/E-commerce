@@ -18,7 +18,7 @@ const Add = ({token}) => {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("Men");
   const [subCategory, setSubCategory] = useState("Topwear");
-  const [bestseller, setBestseller] = useState("false");
+  const [bestseller, setBestseller] = useState("");
   const [sizes, setSizes] = useState([]);
 
   const onSubmitHandler = async (e) => {
