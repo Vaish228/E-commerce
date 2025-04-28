@@ -3,15 +3,17 @@ import userModel from "../models/userModel.js";
 const addToCart = async (req, res) => {
     try {
         const { userId, itemId, size } = req.body;
-
+        
         // Validate inputs
         if (!userId || !itemId || !size) {
+            console.log("Hiii 1");
             return res.status(400).json({ success: false, message: "Invalid input data" });
         }
 
         // Find user and initialize cartData if needed
         const userData = await userModel.findById(userId);
         if (!userData) {
+
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
@@ -21,7 +23,6 @@ const addToCart = async (req, res) => {
 
         // Update the database
         await userModel.findByIdAndUpdate(userId, { cartData });
-
         res.status(200).json({ success: true, message: "Added to cart" });
     } catch (error) {
         console.error(error);
@@ -60,7 +61,9 @@ const updateCart = async (req, res) => {
 // backend-side (Express controller)
 const getUserCart = async (req, res) => {
     try {
-        const { userId } = req.params; // Get from URL params
+        const { userId } = req.body; // Get from URL params
+        console.log("Hiii 1");
+console.log(userId);
         if (!userId) {
             return res.status(400).json({ success: false, message: "User ID is required" });
         }
@@ -71,6 +74,7 @@ const getUserCart = async (req, res) => {
         }
 
         const cartData = userData.cartData || {};
+        console.log(cartData);
         res.status(200).json({ success: true, cartData });
     } catch (error) {
         console.error('❌ Error fetching cart data:', error);

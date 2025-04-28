@@ -8,7 +8,7 @@ import productRouter from './routes/productRoute.js'
 import { registerUser } from './controllers/userController.js';
 import cartRouter from './routes/cartRoute.js'
 //import { updateCart } from './controllers/cartController.js';
-//import orderRouter from './routes/orderRoute.js'
+import orderRouter from './routes/orderRoute.js'
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -28,7 +28,7 @@ app.use('/api/users',userRouter)
 app.use('/api/product',productRouter)
 app.use('/api/cart',cartRouter)
 //app.post('/api/cart/update', updateCart);
-//app.use('/api/order',orderRouter)
+app.use('/api/order',orderRouter)
 
 
 app.get('/',(req,res)=>{

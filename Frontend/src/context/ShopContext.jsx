@@ -9,7 +9,7 @@ const ShopContextProvider = ({ children }) => {
   const currency = '₹';
   const delivery_fee = 40;
  // console.log(import.meta.env);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "http://localhost:5000";
   //console.log("Backend URL:", backendUrl);  
 
   const [search, setSearch] = useState('');
@@ -116,13 +116,14 @@ const getProductsData = async () => {
     try {
       if (!userToken) {
         toast.error('No token found!');
-        return;
       }
-      
+      const userId = localStorage.getItem("userId"); // Ensure userId is available
+      const token = localStorage.getItem("token");  // Get token from localStorage
+
       const response = await axios.post(
         `${backendUrl}/api/cart/get`, 
         {},  // Sending an empty object as the body, if no specific parameters are needed
-        { headers: { token: userToken } }
+        { headers: { token: token } }
       );
   
       if (response.data.success) {
@@ -153,7 +154,7 @@ const getProductsData = async () => {
 
 useEffect(() => {
   const fetchData = async () => {
-    if (token && localStorage.getItem('token')) {
+    if (localStorage.getItem('token')) {
       const storedToken = localStorage.getItem('token');
       setToken(storedToken);
       await getUserCart(storedToken);  // Ensure you're awaiting here

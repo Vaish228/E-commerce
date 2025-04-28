@@ -19,7 +19,7 @@ const loginUser = async (req,res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if(isMatch){
             const token = createToken(user._id)
-            res.json({success:true, token})
+            res.json({success:true, token,id:user._id})
         }
         else{
             res.json({success:false, message:"Invalid Credentials"})
@@ -45,6 +45,7 @@ const registerUser = async (req,res) => {
             return res.json({success:false, message:"Please enter a valid email"})
         }
         if(password.length < 8){
+            console.log("hi");
             return res.json({success:false, message:"Please enter a strong password"})
         }
 
@@ -58,7 +59,7 @@ const registerUser = async (req,res) => {
         const user = await newUser.save()
 
         const token = createToken(user._id)
-        res.json({success:true,token})
+        res.json({success:true,token,id:user._id})
     }catch(error){
         console.log(error);
         res.json({success:false,message:error.message})

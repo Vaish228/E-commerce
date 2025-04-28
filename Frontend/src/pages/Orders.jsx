@@ -4,18 +4,20 @@ import Title from '../components/Title';
 import axios from 'axios'
 
 const Orders = () => {
-  const { backendUrl, token, currency } = useContext(ShopContext);
+  const { backendUrl, currency } = useContext(ShopContext);
   
   const [orderData, setorderData] = useState([])
 
   const loadOrderData = async () => {
     try {
+      const token=localStorage.getItem('token');
       if(!token){
         return null
       }
       const response = await axios.post(backendUrl + '/api/order/userorders', {}, {headers:{token}})
+      let allOrdersItem = []
+
       if(response.data.success){
-        let allOrdersItem = []
         response.data.orders.map((order)=>{
           order.items.map((item)=>{
             item['status'] = order.status
@@ -25,7 +27,7 @@ const Orders = () => {
             allOrdersItem.push(item)
           }) 
         })
-        setorderData(allOrderItem.reverse());
+        setorderData(allOrdersItem.reverse());
         
       }
 
@@ -36,7 +38,7 @@ const Orders = () => {
 
   useEffect(()=>{
     loadOrderData()
-  },[token])
+  },[])
 
 
 
@@ -61,7 +63,8 @@ const Orders = () => {
                   <p>Quantity: {item.quantity}</p>
                   <p>Size: {item.size} </p>
                 </div>
-                <p className="mt-1">Date: <span className="text-gray-400">{new Date(item.date).getTime.toDateString()}</span>
+                <p className="mt-1">Date: <span className="text-gray-400">{new Date(item.date).toDateString()
+                }</span>
                 </p>
                 <p className="mt-1">
                   Payment: <span className="text-gray-400">{item.paymentMethod}</span>
