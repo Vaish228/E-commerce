@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import { Routes, Route } from 'react-router-dom'
 import Add from './pages/Add'
 import List from './pages/List'
 import Orders from './pages/Orders'
+import OrderDetail from './pages/OrderDetail'
 import { useState } from 'react'
 import Login from './components/Login'
 import {ToastContainer} from 'react-toastify';
@@ -32,8 +33,8 @@ const App = () => {
          <Routes>
            <Route path='/add' element={<Add token={token} />}/>
            <Route path='/list' element={<List token={token} />}/>
-           <Route path='/orders' element={<Orders token={token} />}/>
-
+           <Route path='/orders' element={<Orders/>}/>
+           <Route path='/order/:orderId' element={<OrderDetail/>}/>
          </Routes>
        </div>
       </div>

@@ -1,0 +1,7 @@
+
+{
+    "scripts":
+               {"start_admin":"cd admin && npm run dev", 
+                "start_frontend":"cd Frontend && npm run dev"}
+
+}

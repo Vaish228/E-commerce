@@ -5,12 +5,11 @@ import axios from 'axios';
 
 export const ShopContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 const ShopContextProvider = ({ children }) => {
   const currency = '₹';
   const delivery_fee = 40;
- // console.log(import.meta.env);
   const backendUrl = "http://localhost:5000";
-  //console.log("Backend URL:", backendUrl);  
 
   const [search, setSearch] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -60,8 +59,6 @@ const ShopContextProvider = ({ children }) => {
     }
   };
   
-
-
   const getCartCount = () => {
     return Object.values(cartItems).reduce(
       (total, sizes) => total + Object.values(sizes).reduce((sum, count) => sum + count, 0),
@@ -70,17 +67,53 @@ const ShopContextProvider = ({ children }) => {
   };
 
   const updateQuantity = async (itemId, size, quantity) => {
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    
+    if (!userId || !token) {
+      toast.error("User not authenticated!");
+      return;
+    }
+    
+    // Update local state first for immediate UI feedback
     const cartData = structuredClone(cartItems);
-    cartData[itemId][size] = quantity;
+    
+    if (quantity === 0) {
+      // Remove the size entry if quantity is 0
+      if (cartData[itemId] && cartData[itemId][size]) {
+        delete cartData[itemId][size];
+        
+        // If no sizes left for this item, remove the item entry
+        if (Object.keys(cartData[itemId]).length === 0) {
+          delete cartData[itemId];
+        }
+      }
+    } else {
+      // Update quantity
+      if (!cartData[itemId]) {
+        cartData[itemId] = {};
+      }
+      cartData[itemId][size] = quantity;
+    }
+    
     setCartItems(cartData);
 
-    if (token) {
-      try {
-        await axios.post(backendUrl + '/api/cart/update', {itemId, size, quantity}, {headers:{token}})
-      } catch (error) {
-        console.error(error);
-        toast.error('Failed to update cart quantity.');
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/cart/update`, 
+        { userId, itemId, size, quantity },
+        { headers: { token } }
+      );
+      
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to update cart.");
       }
+    } catch (error) {
+      console.error("Update cart error:", error);
+      toast.error(error.response?.data?.message || "Failed to update cart quantity.");
+      
+      // Revert local state on error
+      getUserCart(token);
     }
   };
 
@@ -96,38 +129,40 @@ const ShopContextProvider = ({ children }) => {
     return totalAmount;
   };
   
-
-const getProductsData = async () => {
+  const getProductsData = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/product/list');
-      console.log("Fetched Products:", response.data);  // Log the full response from the API
+      const response = await axios.get(`${backendUrl}/api/product/list`);
       if (response.data.success) {
         setProducts(response.data.products); 
       } else {
         toast.error(response.data.message || 'Failed to fetch products.');
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching products:", error);
       toast.error('Error fetching products.');
     }
   };
   
   const getUserCart = async (userToken) => {
     try {
-      if (!userToken) {
-        toast.error('No token found!');
+      const userId = localStorage.getItem("userId");
+      const token = userToken || localStorage.getItem("token");
+      
+      if (!userId || !token) {
+        console.warn("Missing userId or token for cart fetch");
+        return;
       }
-      const userId = localStorage.getItem("userId"); // Ensure userId is available
-      const token = localStorage.getItem("token");  // Get token from localStorage
-
+      
       const response = await axios.post(
         `${backendUrl}/api/cart/get`, 
-        {},  // Sending an empty object as the body, if no specific parameters are needed
-        { headers: { token: token } }
+        { userId },  // Send userId in the request body
+        { headers: { token } }
       );
   
       if (response.data.success) {
         setCartItems(response.data.cartData || {});
+      } else {
+        throw new Error(response.data.message || "Failed to fetch cart data");
       }
     } catch (error) {
       console.error('Error fetching cart data:', error);
@@ -135,37 +170,21 @@ const getProductsData = async () => {
     }
   };
   
-  
-        
-
-  
-
   useEffect(() => {
     getProductsData();
   }, []);
 
   useEffect(() => {
-    if (products.length === 0) {
-        console.log('Products are still loading...');
-    } else {
-        console.log('Products Loaded:', products);
-    }
-}, [products]);
+    const fetchData = async () => {
+      if (localStorage.getItem('token')) {
+        const storedToken = localStorage.getItem('token');
+        setToken(storedToken);
+        await getUserCart(storedToken);
+      }
+    };
 
-useEffect(() => {
-  const fetchData = async () => {
-    if (localStorage.getItem('token')) {
-      const storedToken = localStorage.getItem('token');
-      setToken(storedToken);
-      await getUserCart(storedToken);  // Ensure you're awaiting here
-    }
-  };
-
-  fetchData();  // Call the async function
-}, [token]);
-
-
-
+    fetchData();
+  }, [token]);
 
   const value = {
     products,
@@ -186,8 +205,6 @@ useEffect(() => {
     setToken,
     token,
   };
-
-
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 };
