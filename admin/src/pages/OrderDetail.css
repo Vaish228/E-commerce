@@ -129,3 +129,117 @@
     border-bottom: none;
     padding-top: 15px;
   }
+
+  /* Add these styles to your existing OrderDetail.css file */
+
+.status-update-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.status-update-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.status-select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.update-status-btn {
+  padding: 8px 16px;
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.update-status-btn:hover {
+  background-color: #3a5ce5;
+}
+
+.update-status-btn:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.update-message {
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.update-message.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.update-message.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #ef4444;
+}
+
+/* Status styles */
+.status {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.status-order-placed {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-processing {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-shipped {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-out-for-delivery {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-delivered {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-refund-initiated {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-refunded {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}

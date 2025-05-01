@@ -10,6 +10,8 @@ import { registerUser } from './controllers/userController.js';
 import cartRouter from './routes/cartRoute.js'
 //import { updateCart } from './controllers/cartController.js';
 import orderRouter from './routes/orderRoute.js'
+import paymentRoutes from './routes/paymentRoute.js';
+
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -36,6 +38,7 @@ app.get('/',(req,res)=>{
     res.send("API Working")
 })
 app.post('/api/users', registerUser);
-
+// Then in your routes setup section:
+app.use('/api/payment', paymentRoutes);
 
 app.listen(port, ()=> console.log('Server started on PORT : '+ port))

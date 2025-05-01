@@ -8,6 +8,20 @@ const OrderDetail = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [updateStatus, setUpdateStatus] = useState('');
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState({ text: '', type: '' });
+
+  const statusOptions = [
+    'Order Placed', 
+    'Processing', 
+    'Shipped', 
+    'Out for Delivery', 
+    'Delivered', 
+    'Cancelled', 
+    'Refund Initiated', 
+    'Refunded'
+  ];
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -17,6 +31,7 @@ const OrderDetail = () => {
         
         if (response.data.success) {
           setOrder(response.data.order);
+          setUpdateStatus(response.data.order.status);
         } else {
           setError('Failed to fetch order details');
         }
@@ -41,6 +56,46 @@ const OrderDetail = () => {
     });
   };
 
+  const handleStatusChange = (e) => {
+    setUpdateStatus(e.target.value);
+  };
+
+  const updateOrderStatus = async () => {
+    try {
+      setUpdateLoading(true);
+      setUpdateMessage({ text: '', type: '' });
+      
+      const response = await axios.post('http://localhost:5000/api/admin/orders/update', {
+        orderId: order.orderId,
+        status: updateStatus
+      });
+      
+      if (response.data.success) {
+        setOrder({
+          ...order,
+          status: updateStatus
+        });
+        setUpdateMessage({ text: 'Order status updated successfully!', type: 'success' });
+      } else {
+        setUpdateMessage({ text: 'Failed to update order status', type: 'error' });
+      }
+    } catch (err) {
+      setUpdateMessage({ 
+        text: err.response?.data?.message || err.message || 'Error updating order status', 
+        type: 'error' 
+      });
+    } finally {
+      setUpdateLoading(false);
+      
+      // Clear success message after 3 seconds
+      if (updateMessage.type === 'success') {
+        setTimeout(() => {
+          setUpdateMessage({ text: '', type: '' });
+        }, 3000);
+      }
+    }
+  };
+
   if (loading) return <div className="loading">Loading order details...</div>;
   if (error) return <div className="error">Error: {error}</div>;
   if (!order) return <div className="not-found">Order not found</div>;
@@ -53,9 +108,36 @@ const OrderDetail = () => {
           <p className="order-date">Placed on {formatDate(order.orderDate)}</p>
         </div>
         <div className="order-header-right">
-          <span className={`status status-${order.status.replace(/\s+/g, '-').toLowerCase()}`}>
-            {order.status}
-          </span>
+          <div className="status-update-section">
+            <span className={`status status-${order.status.replace(/\s+/g, '-').toLowerCase()}`}>
+              {order.status}
+            </span>
+            <div className="status-update-controls">
+              <select 
+                value={updateStatus} 
+                onChange={handleStatusChange}
+                className="status-select"
+              >
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+              <button 
+                onClick={updateOrderStatus} 
+                disabled={updateLoading || order.status === updateStatus}
+                className="update-status-btn"
+              >
+                {updateLoading ? 'Updating...' : 'Update Status'}
+              </button>
+            </div>
+            {updateMessage.text && (
+              <div className={`update-message ${updateMessage.type}`}>
+                {updateMessage.text}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
