@@ -6,11 +6,11 @@ import Order from '../models/orderModel.js';
  * @param {Object} res - Response object
  * @returns {Object} Updated order information
  */
+
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId, status } = req.body;
     
-    // Validate required fields
     if (!orderId || !status) {
       return res.status(400).json({
         success: false,
@@ -18,7 +18,6 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
     
-    // Validate status value
     const validStatuses = ['Order Placed', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Refund Initiated', 'Refunded'];
     
     if (!validStatuses.includes(status)) {
@@ -29,11 +28,10 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
     
-    // Find and update the order
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
       { status },
-      { new: true } // Return the updated document
+      { new: true } 
     );
     
     if (!updatedOrder) {

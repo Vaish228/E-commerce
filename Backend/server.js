@@ -21,10 +21,10 @@ connectCloudinary()
 app.use(express.json())
 app.use(cors())
 // app.use(cors({
-//     origin: 'http://localhost:5173',  // Allow requests from localhost
+//     origin: 'http://localhost:5173',  
 //     methods: ['GET', 'POST', 'PUT', 'DELETE'],  
-//     allowedHeaders: 'Content-Type,Authorization,token',      // Allow these methods
-//     credentials: true                // Allow cookies or headers (if needed)
+//     allowedHeaders: 'Content-Type,Authorization,token',      
+//     credentials: true               
 //   }));
   
 app.use('/api/users',userRouter)
@@ -38,7 +38,6 @@ app.get('/',(req,res)=>{
     res.send("API Working")
 })
 app.post('/api/users', registerUser);
-// Then in your routes setup section:
 app.use('/api/payment', paymentRoutes);
 
 app.listen(port, ()=> console.log('Server started on PORT : '+ port))

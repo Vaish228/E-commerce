@@ -4,12 +4,10 @@ const addToCart = async (req, res) => {
     try {
         const { userId, itemId, size } = req.body;
         
-        // Validate inputs
         if (!userId || !itemId || !size) {
             return res.status(400).json({ success: false, message: "Invalid input data" });
         }
         
-        // Find user and initialize cartData if needed
         const userData = await userModel.findById(userId);
         if (!userData) {
             return res.status(404).json({ success: false, message: "User not found" });
@@ -19,7 +17,6 @@ const addToCart = async (req, res) => {
         cartData[itemId] = cartData[itemId] || {};
         cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
         
-        // Update the database
         await userModel.findByIdAndUpdate(userId, { cartData });
         res.status(200).json({ success: true, message: "Added to cart" });
     } catch (error) {
@@ -32,7 +29,6 @@ const updateCart = async (req, res) => {
     try {
         const { userId, itemId, size, quantity } = req.body;
         
-        // Validate inputs
         if (!userId || !itemId || !size || typeof quantity !== "number") {
             return res.status(400).json({ 
                 success: false, 
@@ -41,7 +37,6 @@ const updateCart = async (req, res) => {
             });
         }
         
-        // Find user and initialize cartData if needed
         const userData = await userModel.findById(userId);
         if (!userData) {
             return res.status(404).json({ success: false, message: "User not found" });
@@ -49,23 +44,19 @@ const updateCart = async (req, res) => {
         
         const cartData = userData.cartData || {};
         
-        // If quantity is 0, remove the size (and potentially the item)
         if (quantity === 0) {
             if (cartData[itemId] && cartData[itemId][size]) {
                 delete cartData[itemId][size];
                 
-                // If no sizes left for this item, remove the item entry
                 if (Object.keys(cartData[itemId]).length === 0) {
                     delete cartData[itemId];
                 }
             }
         } else {
-            // Update quantity
             cartData[itemId] = cartData[itemId] || {};
             cartData[itemId][size] = quantity;
         }
         
-        // Update the database
         await userModel.findByIdAndUpdate(userId, { cartData });
         
         res.status(200).json({ 
@@ -81,7 +72,6 @@ const updateCart = async (req, res) => {
 
 const getUserCart = async (req, res) => {
     try {
-        // Get userId from request body
         const { userId } = req.body;
         
         if (!userId) {

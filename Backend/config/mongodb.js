@@ -11,8 +11,6 @@ const connectDB = async () => {
         bufferCommands: false,
         serverSelectionTimeoutMS: 30000,
       });
-         //mongoose.set('debug', true);
-
         console.log('MongoDB connected');
       } catch (err) {
         console.log('MongoDB connection error:', err.message);

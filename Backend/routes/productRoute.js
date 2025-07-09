@@ -1,13 +1,12 @@
 import express from 'express'
 import multer from 'multer'
-//import upload from './multer.js'
 import { listProducts, addProduct, removeProduct, singleProduct } from '../controllers/productController.js'
 import adminAuth from '../middleware/adminAuth.js'
 const productRouter = express.Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Specify your uploads directory
+        cb(null, 'uploads/'); 
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
@@ -25,8 +24,5 @@ productRouter.post('/add',adminAuth, upload.fields([
 productRouter.post('/remove',adminAuth, removeProduct);
 productRouter.post('/single', singleProduct);
 productRouter.get("/list", listProducts);
-
-
-
 
 export default productRouter

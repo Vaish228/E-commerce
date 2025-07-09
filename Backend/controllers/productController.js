@@ -13,7 +13,6 @@ const addProduct = async (req, res) => {
 
         const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
 
-        // Validate sizes
         let parsedSizes;
         try {
             parsedSizes = JSON.parse(sizes);
@@ -21,7 +20,6 @@ const addProduct = async (req, res) => {
             throw new Error('Invalid sizes JSON format');
         }
 
-        // Upload images to Cloudinary
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
                 if (!item.path) {
@@ -37,7 +35,6 @@ const addProduct = async (req, res) => {
             })
         );
 
-        // Create product data
         const productData = {
             name,
             description,
@@ -52,7 +49,6 @@ const addProduct = async (req, res) => {
 
         console.log(productData);
 
-        // Save to database
         const product = new productModel(productData);
         await product.save();
 
@@ -65,7 +61,6 @@ const addProduct = async (req, res) => {
 const listProducts = async(req,res) => {
     try{
         const products = await productModel.find({});
-        //const products = await ProductModel.find();
         res.json({success:true, products})
         console.log("Success")
 

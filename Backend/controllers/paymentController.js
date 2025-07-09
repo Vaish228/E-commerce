@@ -1,15 +1,13 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import paymentModel from "../models/paymentModel.js";
-import orderModel from "../models/orderModel.js"; // Import your order model
+import orderModel from "../models/orderModel.js"; 
 
-// Initialize Razorpay with your credentials
 const razorpay = new Razorpay({
   key_id: process.env.KEY_ID,
   key_secret: process.env.KEY_SECRET
 });
 
-// 1. Initiate Razorpay Order
 export const initiateOrder = async (req, res) => {
   const { amount, currency = "INR", userId, orderId } = req.body;
 
@@ -21,18 +19,15 @@ export const initiateOrder = async (req, res) => {
   }
 
   try {
-    // Create options object for Razorpay
     const options = {
-      amount: Math.round(amount * 100), // Convert to paise and ensure it's an integer
+      amount: Math.round(amount * 100), 
       currency,
       receipt: `receipt_${orderId}`,
       payment_capture: 1
     };
 
-    // Create order in Razorpay
     const order = await razorpay.orders.create(options);
 
-    // Send response back to client
     res.status(200).json({
       success: true,
       message: "Order created",
@@ -51,7 +46,6 @@ export const initiateOrder = async (req, res) => {
   }
 };
 
-// 2. Verify Signature and Save Payment
 export const verifyAndSavePayment = async (req, res) => {
   const {
     razorpayOrderId,
@@ -62,7 +56,6 @@ export const verifyAndSavePayment = async (req, res) => {
     amountPaid
   } = req.body;
 
-  // Validate required fields
   if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
     return res.status(400).json({ 
       success: false, 
@@ -70,13 +63,11 @@ export const verifyAndSavePayment = async (req, res) => {
     });
   }
 
-  // Verify the payment signature
   const expectedSignature = crypto
     .createHmac("sha256", process.env.KEY_SECRET)
     .update(`${razorpayOrderId}|${razorpayPaymentId}`)
     .digest("hex");
 
-  // Check if signature matches
   if (expectedSignature !== razorpaySignature) {
     return res.status(400).json({ 
       success: false, 
@@ -85,7 +76,6 @@ export const verifyAndSavePayment = async (req, res) => {
   }
 
   try {
-    // Create and save payment record
     const payment = new paymentModel({
       userId,
       orderId,
@@ -98,12 +88,10 @@ export const verifyAndSavePayment = async (req, res) => {
 
     await payment.save();
 
-    // Update order status to "paid" (assuming you have a status field in your order model)
     await orderModel.findByIdAndUpdate(orderId, { 
       payment: true
     });
 
-    // Send successful response
     res.status(200).json({ 
       success: true,
       message: "Payment verified & saved", 
@@ -119,7 +107,6 @@ export const verifyAndSavePayment = async (req, res) => {
   }
 };
 
-// 3. Get Payment Status by Order ID
 export const getPaymentStatus = async (req, res) => {
   const { orderId } = req.params;
 

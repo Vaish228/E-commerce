@@ -13,7 +13,7 @@ const BestSeller = () => {
     useEffect(() => {
       const bestProduct = products.filter((item) => item.bestseller);
       setBestSeller(bestProduct.slice(0, 5));
-    }, [products]); // Make sure products state is included as a dependency
+    }, [products]); 
     
 
   return (

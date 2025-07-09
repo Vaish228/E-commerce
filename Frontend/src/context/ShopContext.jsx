@@ -5,7 +5,6 @@ import axios from 'axios';
 
 export const ShopContext = createContext();
 
-// eslint-disable-next-line react/prop-types
 const ShopContextProvider = ({ children }) => {
   const currency = '₹';
   const delivery_fee = 40;
@@ -19,9 +18,8 @@ const ShopContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const addToCart = async (itemId, size) => {
-    const userId = localStorage.getItem("userId"); // Ensure userId is available
-    const token = localStorage.getItem("token");  // Get token from localStorage
-  
+    const userId = localStorage.getItem("userId"); 
+    const token = localStorage.getItem("token");  
     if (!userId || !token) {
       toast.error("User not authenticated!");
       return;
@@ -45,7 +43,7 @@ const ShopContextProvider = ({ children }) => {
       const response = await axios.post(
         `${backendUrl}/api/cart/add`,
         { userId, itemId, size },
-        { headers: { token } } // Send token in the header
+        { headers: { token } } 
       );
   
       if (response.data.success) {
@@ -75,21 +73,17 @@ const ShopContextProvider = ({ children }) => {
       return;
     }
     
-    // Update local state first for immediate UI feedback
     const cartData = structuredClone(cartItems);
     
     if (quantity === 0) {
-      // Remove the size entry if quantity is 0
       if (cartData[itemId] && cartData[itemId][size]) {
         delete cartData[itemId][size];
         
-        // If no sizes left for this item, remove the item entry
         if (Object.keys(cartData[itemId]).length === 0) {
           delete cartData[itemId];
         }
       }
     } else {
-      // Update quantity
       if (!cartData[itemId]) {
         cartData[itemId] = {};
       }
@@ -112,7 +106,6 @@ const ShopContextProvider = ({ children }) => {
       console.error("Update cart error:", error);
       toast.error(error.response?.data?.message || "Failed to update cart quantity.");
       
-      // Revert local state on error
       getUserCart(token);
     }
   };
@@ -155,7 +148,7 @@ const ShopContextProvider = ({ children }) => {
       
       const response = await axios.post(
         `${backendUrl}/api/cart/get`, 
-        { userId },  // Send userId in the request body
+        { userId }, 
         { headers: { token } }
       );
   

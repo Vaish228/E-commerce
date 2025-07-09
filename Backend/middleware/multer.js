@@ -1,13 +1,8 @@
 import multer from 'multer';
-//import upload from './multer.js'
-
 import fs from 'fs';
 
 
 const storage = multer.diskStorage({ 
-    // filename:function(req,file, callback){
-    //     callback(null, file.originalname)
-    // }
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
     },

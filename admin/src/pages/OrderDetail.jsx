@@ -87,7 +87,6 @@ const OrderDetail = () => {
     } finally {
       setUpdateLoading(false);
       
-      // Clear success message after 3 seconds
       if (updateMessage.type === 'success') {
         setTimeout(() => {
           setUpdateMessage({ text: '', type: '' });

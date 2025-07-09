@@ -9,7 +9,6 @@ const Orders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch orders data
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -32,7 +31,6 @@ const Orders = () => {
     fetchOrders();
   }, [currentPage]);
 
-  // Format date
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString('en-IN', {
@@ -42,16 +40,13 @@ const Orders = () => {
     });
   };
 
-  // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  // Function to view order details
   const viewOrderDetails = (orderId) => {
-    // Navigate to order details page
     window.location.href = `/order/${orderId}`;
   };
 
@@ -123,7 +118,6 @@ const Orders = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="pagination">
           <button 

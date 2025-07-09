@@ -15,7 +15,6 @@ const SearchBar = () => {
         else{
             setVisible(false);
         }
-        //console.log(location.pathname);
     },[location])
   
   
