@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Orders.css';
+import { url } from '../url';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -13,7 +14,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/admin/orders?page=${currentPage}&limit=10`);
+        const response = await axios.get(`${url}/api/admin/orders?page=${currentPage}&limit=10`);
         
         if (response.data.success) {
           setOrders(response.data.orders);
