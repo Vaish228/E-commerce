@@ -2,13 +2,15 @@ import { useState, createContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+
 
 export const ShopContext = createContext();
 
 const ShopContextProvider = ({ children }) => {
   const currency = '₹';
   const delivery_fee = 40;
-  const backendUrl = "http://localhost:5000";
+  const backendUrl = "https://e-commerce-backend-038m.onrender.com";
 
   const [search, setSearch] = useState('');
   const [showSearch, setShowSearch] = useState(false);
